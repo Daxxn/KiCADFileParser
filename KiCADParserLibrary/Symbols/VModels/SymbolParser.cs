@@ -48,21 +48,20 @@ public class SymbolParser : ISymbolParser
    {
       try
       {
-         Library lib = new();
-         lib.Name = Path.GetFileNameWithoutExtension(path);
          var rootNode = Builder.ParseFile(path);
-         var versionNode = rootNode.GetNode("version");
          var genNode = rootNode.GetNode("generator");
-         if (versionNode != null)
+         Library lib = new()
          {
-            lib.Version = versionNode.Value;
-         }
+            Name = Path.GetFileNameWithoutExtension(path),
+            RootNode = rootNode
+         };
          if (genNode != null)
          {
             lib.Generator = genNode.Value;
          }
 
-         if (rootNode.Data.StartsWith("kicad_symbol_lib"))
+         var libNode = rootNode.Search("kicad_symbol_lib");
+         if (libNode != null)
          {
             if (rootNode.Children is null)
             {

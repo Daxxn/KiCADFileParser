@@ -124,16 +124,16 @@ public class TreeBuilder
       bool inQuotes = false;
       string temp = "";
       List<string> result = new();
-      foreach (var ch in data)
+      for (int i = 0; i < data.Length; i++)
       {
-         if (ch == '"')
+         if (data[i] == '"')
          {
             inQuotes = !inQuotes;
             continue;
          }
          if (inQuotes)
          {
-            temp += ch;
+            temp += data[i];
          }
          else
          {
@@ -144,7 +144,7 @@ public class TreeBuilder
             }
             else
             {
-               unQuoted += ch;
+               unQuoted += data[i];
             }
          }
       }

@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using KiCADParserLibrary.Tree;
+
 using MVVMLibrary;
 
 namespace KiCADParserLibrary.Symbols.VModels;
@@ -15,11 +17,12 @@ namespace KiCADParserLibrary.Symbols.VModels;
 public class Library : Model
 {
 	private string _name = null!;
-	private string _version = null!;
    private string _generator = null!;
    private ObservableCollection<Symbol> _symbols = new();
+	private Node _root = null!;
+	private Node _generatorNode = null;
 
-   public override string ToString() => $"Symbol Library {Name} - Ver: {Version} Gen: {Generator}";
+	public override string ToString() => $"Symbol Library {Name} - Gen: {Generator} Symbol Count: {Symbols.Count}";
 
 	public string Name
 	{
@@ -27,16 +30,6 @@ public class Library : Model
 		set
 		{
 			_name = value;
-			OnPropertyChanged();
-		}
-	}
-
-	public string Version
-	{
-		get => _version;
-		set
-		{
-			_version = value;
 			OnPropertyChanged();
 		}
 	}
@@ -57,6 +50,26 @@ public class Library : Model
 		set
 		{
 			_symbols = value;
+			OnPropertyChanged();
+		}
+	}
+
+	public Node RootNode
+	{
+		get => _root;
+		set
+		{
+			_root = value;
+			OnPropertyChanged();
+		}
+	}
+
+	public Node GeneratorNode
+	{
+		get => _generatorNode;
+		set
+		{
+			_generatorNode = value;
 			OnPropertyChanged();
 		}
 	}

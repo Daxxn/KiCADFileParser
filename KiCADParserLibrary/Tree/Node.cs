@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace KiCADParserLibrary.Tree;
@@ -14,22 +15,52 @@ namespace KiCADParserLibrary.Tree;
 public class Node
 {
    #region Local Props
+   /// <summary>
+   /// Parent Node of this child.
+   /// </summary>
    public Node? Parent { get; set; }
+
+   /// <summary>
+   /// All children of this node.
+   /// </summary>
    public List<Node>? Children { get; set; }
+
+   /// <summary>
+   /// DEPRECIATED
+   /// </summary>
    public List<NodeProperty>? Properties { get; set; }
+
+   /// <summary>
+   /// String representing the type specifier of this node.
+   /// </summary>
    public string Type { get; set; } = string.Empty;
    public string Key { get; set; } = string.Empty;
    public string Value { get; set; } = string.Empty;
+
+   /// <summary>
+   /// The raw string that contains all the <see cref="Props"/> data.
+   /// </summary>
    public string Data { get; set; } = string.Empty;
-   public List<string>? Props { get; set; }
+
+   /// <summary>
+   /// Local properties that are "in-line" with this current node.
+   /// </summary>
+   public List<string> Props { get; set; } = null!;
+   public Regex Reg { get; set; } = new Regex("\"([^\"]*)\"", RegexOptions.Multiline);
    #endregion
 
    #region Methods
+   /// <inheritdoc/>
    public override string ToString()
    {
       return $"Node {Data}";
    }
 
+   /// <summary>
+   /// Searches for the node with the 
+   /// </summary>
+   /// <param name="searchValue"></param>
+   /// <returns></returns>
    public Node? GetNode(string searchValue)
    {
       if (Type.Trim() == searchValue)
@@ -53,7 +84,7 @@ public class Node
       List<Node> foundNode = new();
       Node? parent = this;
       string id = nodeLink;
-      if (nodeLink.Contains(">"))
+      if (nodeLink.Contains('>'))
       {
          var spl = nodeLink.Split('>');
          id = spl[^1];
@@ -73,8 +104,16 @@ public class Node
       return foundNode;
    }
 
+   /// <summary>
+   /// DEPRECIATED
+   /// </summary>
    public NodeProperty? GetProperty(string key) => Properties?.FirstOrDefault(p => p.Key == key);
 
+   /// <summary>
+   /// Searches children only for the matching node sequence.
+   /// </summary>
+   /// <param name="prop">The type ID of the child node.</param>
+   /// <returns>The found <see cref="Node"/> otherwise <see langword="null"/>.</returns>
    public Node? SearchChildren(string prop)
    {
       if (Children is null)
@@ -90,9 +129,11 @@ public class Node
    }
 
    /// <summary>
-   /// Delimited by ">"
+   /// Searches all local nodes recursively for the matching node sequence.
+   /// <para/>
+   /// Delimited with ">" characters.
    /// </summary>
-   /// <param name="nodeLink"></param>
+   /// <param name="nodeLink">The '>' delimited list of type IDs.</param>
    /// <returns></returns>
    public Node? Search(string nodeLink)
    {
@@ -111,6 +152,9 @@ public class Node
       }
    }
 
+   /// <summary>
+   /// DEPRECIATED
+   /// </summary>
    private Node? SearchRecursive(string[] linkList)
    {
       if (linkList.Length == 0)
@@ -128,6 +172,12 @@ public class Node
       return null;
    }
 
+   /// <summary>
+   /// Not sure ATM.
+   /// <para/>
+   /// Probably going to be replaced entirely...
+   /// </summary>
+   /// <returns></returns>
    public string Write()
    {
       StringBuilder builder = new StringBuilder();
@@ -188,6 +238,64 @@ public class Node
       builder.Append(')');
       return builder.ToString();
    }
+
+   /// <summary>
+   /// Creates a simple copy of this node.
+   /// </summary>
+   /// <returns>The copy of this node.</returns>
+   public Node ShallowCopy()
+   {
+      return new Node
+      {
+         Children = Children,
+         Type = Type,
+         Data = Data,
+         Key = Key,
+         Value = Value,
+         Parent = Parent,
+         Properties = Properties,
+         Props = Props
+      };
+   }
+
+   /// <summary>
+   /// Updates the property data.
+   /// </summary>
+   public void UpdateData()
+   {
+      if (Props is null) return;
+      StringBuilder builder = new();
+      //builder.Append(Type);
+      foreach (var prop in Props)
+      {
+         builder.Append(" \"");
+         builder.Append(prop);
+         builder.Append('"');
+      }
+      Data = builder.ToString();
+   }
+
+   //public void UpdateData()
+   //{
+   //   if (Props is null) return;
+   //   StringBuilder builder = new();
+   //   if (Data.Contains('"'))
+   //   {
+   //      var results = Reg.Matches(Data);
+   //      for (int i = 0; i < results.Count; i++)
+   //      {
+   //         results.repl
+   //      }
+   //   }
+   //   else
+   //   {
+   //      foreach (var prop in Props)
+   //      {
+   //         builder.Append(' ');
+   //         builder.Append(prop);
+   //      }
+   //   }
+   //}
    #endregion
 
    #region Full Props

@@ -25,14 +25,13 @@ public class Coordinates : Model
       Z = z;
    }
 
-   public static Coordinates ParseString(string coords)
+   public static Coordinates ParseString(string[] coords)
    {
-      var coordsSplit = coords.Split(' ');
-      if (coordsSplit.Length == 3)
+      if (coords.Length == 3)
       {
-         _ = double.TryParse(coordsSplit[0], out double x);
-         _ = double.TryParse(coordsSplit[1], out double y);
-         _ = double.TryParse(coordsSplit[2], out double z);
+         _ = double.TryParse(coords[0], out double x);
+         _ = double.TryParse(coords[1], out double y);
+         _ = double.TryParse(coords[2], out double z);
          return new Coordinates(x, y, z);
       }
       throw new Exception("Unable to parse coordinates.");

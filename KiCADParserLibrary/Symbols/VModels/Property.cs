@@ -18,6 +18,7 @@ public class Property : Model
    private string _name = null!;
    private string _value = null!;
    private Coordinates _coords = null!;
+   private Node _node = null!;
    #endregion
 
    #region Constructors
@@ -27,26 +28,24 @@ public class Property : Model
    #region Methods
    public static Property Create(Node node)
    {
-      Property newProp = new();
-
-      if (node.GetNode("id") is Node idNode)
+      Property newProp = new()
       {
-         if (int.TryParse(idNode.Value.Trim(), out int id))
+         Node = node,
+      };
+
+      if (node.Props?.Count > 0)
+      {
+         newProp.Name = node.Props[0];
+         if (node.Props?.Count > 1)
          {
-            newProp.Id = id;
+            newProp.Value = node.Props[1];
          }
       }
-      if (node.GetNode("at") is Node coordsNode)
-      {
-         newProp.Coords = Coordinates.ParseString(coordsNode.Value);
-      }
 
-      if (node.Properties is null)
+      if (node.Search("at") is Node coordsNode)
       {
-         throw new Exception("No properties found.");
+         newProp.Coords = Coordinates.ParseString(coordsNode.Props.ToArray());
       }
-      newProp.Name = node.Properties[0].Key ?? string.Empty;
-      newProp.Value = node.Properties[0].Value ?? string.Empty;
 
       return newProp;
    }
@@ -89,6 +88,16 @@ public class Property : Model
       set
       {
          _coords = value;
+         OnPropertyChanged();
+      }
+   }
+
+   public Node Node
+   {
+      get => _node;
+      set
+      {
+         _node = value;
          OnPropertyChanged();
       }
    }
