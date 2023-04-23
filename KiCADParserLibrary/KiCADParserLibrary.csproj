@@ -1,13 +1,28 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Version>1.0.0</Version>
+		<Nullable>enable</Nullable>
+		<Title>KiCAD Parser Library</Title>
+		<Description>KiCAD parsing library for reading and writing KiCAD footprint, symbol, and project files.</Description>
+		<RepositoryUrl>git@github.com:Daxxn/KiCADFileParser.git</RepositoryUrl>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageTags>parser;kicad;library;footprint;symbol</PackageTags>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="MVVMLibrary" Version="1.0.1" />
-  </ItemGroup>
+	<ItemGroup>
+	  <None Include="..\README.md">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="MVVMLibrary" Version="1.0.1" />
+	</ItemGroup>
 
 </Project>
